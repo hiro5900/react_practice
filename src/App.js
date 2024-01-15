@@ -1,66 +1,25 @@
-import React, { useState, useReducer } from 'react';
-import Todo from './Todo';
+import React, { useState } from 'react';
+import ClassContextComponent from './ClassContextComponent'
+import FunctionContextComponent from './FunctionContextComponent'
 
-
-// ACTIONS object
-export const ACTIONS = {
-  ADD_TODO: 'add-todo',
-  TOGGLE_TODO: 'toggle-todo',
-  DELETE_TODO: 'delete-todo'
-}
-
-
-// Reducer function
-const reducer = (todos, action) => {
-  if (action.type === ACTIONS.ADD_TODO) {
-    return [...todos, newTodo(action.payload.name)]
-  }
-  if (action.type === ACTIONS.TOGGLE_TODO) {
-    return todos.map((todo) => {
-      if (todo.id === action.payload.id) {
-        return { ...todo, complete: !todo.complete }
-      }
-      return todo
-    })
-  }
-  if(action.type === ACTIONS.DELETE_TODO){
-    return todos.filter(todo => todo.id !== action.payload.id)
-  }
-}
-
-
-// Newtodo
-const newTodo = (name) => {
-  return { id: Date.now(), name: name, complete: false }
-}
-
+export const ThemeContext = React.createContext();
 
 // App function
-const App = (props) => {
-  const [todos, dispatch] = useReducer(reducer, [])
-  const [name, setName] = useState('')
+const App = () => {
+  const [darkTheme, setDarkTheme] = useState(true)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    dispatch({ type: ACTIONS.ADD_TODO, payload: { name: name } })
-    setName('')
+  // toggle theme function
+  const toggleTheme = () => {
+    setDarkTheme(prevDarkTheme => !prevDarkTheme)
   }
-
-  console.log(todos)
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <input type='text' value={name} onChange={e => setName(e.target.value)} />
-      </form>
-      {todos.map(todo => (
-        <Todo
-          key={todo.id}
-          todo={todo}
-          dispatch={dispatch}
-        />
-      ))
-      }
+      <ThemeContext.Provider value={darkTheme}>
+        <button onClick={toggleTheme}>Toggle Theme</button>
+        <FunctionContextComponent />
+        <ClassContextComponent />
+      </ThemeContext.Provider>
     </>
   );
 };
